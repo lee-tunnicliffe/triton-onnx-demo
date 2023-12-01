@@ -36,20 +36,20 @@ from tritonclient.utils import InferenceServerException
 
 def test_infer(
     model_name,
-    x_data,
+    input__0_data,
     headers=None,
     request_compression_algorithm=None,
     response_compression_algorithm=None,
 ):
     inputs = []
     outputs = []
-    inputs.append(httpclient.InferInput("X", [1, 4], "FP64"))
+    inputs.append(httpclient.InferInput("input__0", [1, 4], "FP32"))
 
     # Initialize the data
-    inputs[0].set_data_from_numpy(x_data, binary_data=False)
+    inputs[0].set_data_from_numpy(input__0_data, binary_data=False)
 
-    outputs.append(httpclient.InferRequestedOutput("label", binary_data=False))
-    outputs.append(httpclient.InferRequestedOutput("probabilities", binary_data=False))
+    outputs.append(httpclient.InferRequestedOutput("output__0", binary_data=False))
+    outputs.append(httpclient.InferRequestedOutput("output__1", binary_data=False))
     results = triton_client.infer(
         model_name,
         inputs,
@@ -64,16 +64,16 @@ def test_infer(
 
 def test_infer_no_outputs(
     model_name,
-    x_data,
+    input__0_data,
     headers=None,
     request_compression_algorithm=None,
     response_compression_algorithm=None,
 ):
     inputs = []
-    inputs.append(httpclient.InferInput("X", [1, 4], "FP64"))
+    inputs.append(httpclient.InferInput("input__0", [1, 4], "FP32"))
 
     # Initialize the data
-    inputs[0].set_data_from_numpy(x_data, binary_data=False)
+    inputs[0].set_data_from_numpy(input__0_data, binary_data=False)
 
 
     results = triton_client.infer(
@@ -199,8 +199,8 @@ if __name__ == "__main__":
 
     # Create the data for the two input tensors. Initialize the first
     # to unique integers and the second to all ones.
-    x_data = np.array([[-1.6685316675305422, -1.2990134593088984, 0.27464720361244455, -0.6036204360190907]],
-                      dtype=np.float64)
+    input__0_data = np.array([[-1.6685316675305422, -1.2990134593088984, 0.27464720361244455, -0.6036204360190907]],
+                      dtype=np.float32)
 
     if FLAGS.http_headers is not None:
         headers_dict = {l.split(":")[0]: l.split(":")[1] for l in FLAGS.http_headers}
@@ -210,7 +210,7 @@ if __name__ == "__main__":
     # Infer with requested Outputs
     results = test_infer(
         model_name,
-        x_data,
+        input__0_data,
         headers_dict,
         FLAGS.request_compression_algorithm,
         FLAGS.response_compression_algorithm,
@@ -226,13 +226,13 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Validate the results by comparing with precomputed values.
-    label_data = results.as_numpy("label")
-    probabilities_data = results.as_numpy("probabilities")
+    output__0_data = results.as_numpy("output_0")
+    output__1_data = results.as_numpy("output_1")
 
     # Infer without requested Outputs
     results = test_infer_no_outputs(
         model_name,
-        x_data,
+        input__0_data,
         headers_dict,
         FLAGS.request_compression_algorithm,
         FLAGS.response_compression_algorithm,
@@ -240,12 +240,12 @@ if __name__ == "__main__":
     print(results.get_response())
 
     # Validate the results by comparing with precomputed values.
-    label_data = results.as_numpy("label")
-    probabilities_data = results.as_numpy("probabilities")
+    output__0_data = results.as_numpy("output_0")
+    output__1_data = results.as_numpy("output_1")
 
     # Infer with incorrect model name
     try:
-        _ = test_infer("wrong_model_name", x_data).get_response()
+        _ = test_infer("wrong_model_name", input__0_data).get_response()
         print("expected error message for wrong model name")
         sys.exit(1)
     except InferenceServerException as ex:
