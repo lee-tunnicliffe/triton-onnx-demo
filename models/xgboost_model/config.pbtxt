@@ -20,3 +20,17 @@ output [
     dims: [ -1, 2 ]
   }
 ]
+parameters [
+  {
+    key: "model_type"
+    value: { string_value: "xgboost_json" }
+  },
+  {
+    key: "output_class"
+    value: { string_value: "true" }
+  },
+  {
+    key: "threshold"
+    value: { string_value: "0.5" }
+  }
+]

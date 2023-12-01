@@ -20,7 +20,7 @@ def build_model():
         f.write(onx.SerializeToString())
 
     # Compute the prediction with onnxruntime.
-    sess = rt.InferenceSession("./models/scikit_learn_model/1/model.onnx", providers=["CPUExecutionProvider"])
+    sess = rt.InferenceSession("models/scikit_learn_model/1/model.onnx", providers=["CPUExecutionProvider"])
     input_name = sess.get_inputs()[0].name
     label_name = sess.get_outputs()[0].name
     pred_onx = sess.run([label_name], {input_name: x.astype(np.float64)})[0]

@@ -11,4 +11,6 @@ bst.fit(X_train, y_train)
 # make predictions
 preds = bst.predict(X_test)
 
-bst.save_model('./models/xgboost_model/1/model.json')
+bst.save_model('models/xgboost_model/1/xgboost.json')
+
+bst.load_model('models/xgboost_model/1/xgboost.json')
