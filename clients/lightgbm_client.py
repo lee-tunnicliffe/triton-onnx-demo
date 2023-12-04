@@ -37,19 +37,33 @@ from tritonclient.utils import InferenceServerException
 def test_infer(
     model_name,
     input__0_data,
+    input__1_data,
+    input__2_data,
+    input__3_data,
+    input__4_data,
+    input__5_data,
     headers=None,
     request_compression_algorithm=None,
     response_compression_algorithm=None,
 ):
     inputs = []
     outputs = []
-    inputs.append(httpclient.InferInput("input__0", [1, 4], "FP32"))
+    inputs.append(httpclient.InferInput("input__0", [1], "FP32"))
+    inputs.append(httpclient.InferInput("input__1", [1], "FP32"))
+    inputs.append(httpclient.InferInput("input__2", [1], "FP32"))
+    inputs.append(httpclient.InferInput("input__3", [1], "FP32"))
+    inputs.append(httpclient.InferInput("input__4", [1], "FP32"))
+    inputs.append(httpclient.InferInput("input__5", [1], "FP32"))
 
     # Initialize the data
     inputs[0].set_data_from_numpy(input__0_data, binary_data=False)
+    inputs[1].set_data_from_numpy(input__1_data, binary_data=False)
+    inputs[2].set_data_from_numpy(input__2_data, binary_data=False)
+    inputs[3].set_data_from_numpy(input__3_data, binary_data=False)
+    inputs[4].set_data_from_numpy(input__4_data, binary_data=False)
+    inputs[5].set_data_from_numpy(input__5_data, binary_data=False)
 
     outputs.append(httpclient.InferRequestedOutput("output__0", binary_data=False))
-    outputs.append(httpclient.InferRequestedOutput("output__1", binary_data=False))
     results = triton_client.infer(
         model_name,
         inputs,
@@ -65,15 +79,30 @@ def test_infer(
 def test_infer_no_outputs(
     model_name,
     input__0_data,
+    input__1_data,
+    input__2_data,
+    input__3_data,
+    input__4_data,
+    input__5_data,
     headers=None,
     request_compression_algorithm=None,
     response_compression_algorithm=None,
 ):
     inputs = []
-    inputs.append(httpclient.InferInput("input__0", [1, 4], "FP32"))
+    inputs.append(httpclient.InferInput("input__0", [1], "FP32"))
+    inputs.append(httpclient.InferInput("input__1", [1], "FP32"))
+    inputs.append(httpclient.InferInput("input__2", [1], "FP32"))
+    inputs.append(httpclient.InferInput("input__3", [1], "FP32"))
+    inputs.append(httpclient.InferInput("input__4", [1], "FP32"))
+    inputs.append(httpclient.InferInput("input__5", [1], "FP32"))
 
     # Initialize the data
     inputs[0].set_data_from_numpy(input__0_data, binary_data=False)
+    inputs[1].set_data_from_numpy(input__0_data, binary_data=False)
+    inputs[2].set_data_from_numpy(input__0_data, binary_data=False)
+    inputs[3].set_data_from_numpy(input__0_data, binary_data=False)
+    inputs[4].set_data_from_numpy(input__0_data, binary_data=False)
+    inputs[5].set_data_from_numpy(input__0_data, binary_data=False)
 
 
     results = triton_client.infer(
@@ -195,12 +224,16 @@ if __name__ == "__main__":
         print("channel creation failed: " + str(e))
         sys.exit(1)
 
-    model_name = "xgboost_model"
+    model_name = "lightgbm_model"
 
     # Create the data for the two input tensors. Initialize the first
     # to unique integers and the second to all ones.
-    input__0_data = np.array([[-1.6685316675305422, -1.2990134593088984, 0.27464720361244455, -0.6036204360190907]],
-                      dtype=np.float32)
+    input__0_data = np.array([0.644], dtype=np.float32)
+    input__1_data = np.array([0.247], dtype=np.float32)
+    input__2_data = np.array([-0.447], dtype=np.float32)
+    input__3_data = np.array([0.862], dtype=np.float32)
+    input__4_data = np.array([0.374], dtype=np.float32)
+    input__5_data = np.array([0.854], dtype=np.float32)
 
     if FLAGS.http_headers is not None:
         headers_dict = {l.split(":")[0]: l.split(":")[1] for l in FLAGS.http_headers}
@@ -211,6 +244,11 @@ if __name__ == "__main__":
     results = test_infer(
         model_name,
         input__0_data,
+        input__1_data,
+        input__2_data,
+        input__3_data,
+        input__4_data,
+        input__5_data,
         headers_dict,
         FLAGS.request_compression_algorithm,
         FLAGS.response_compression_algorithm,
@@ -226,13 +264,17 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Validate the results by comparing with precomputed values.
-    output__0_data = results.as_numpy("output__0")
-    output__1_data = results.as_numpy("output__1")
+    output__0_data = results.as_numpy("output_0")
 
     # Infer without requested Outputs
     results = test_infer_no_outputs(
         model_name,
         input__0_data,
+        input__1_data,
+        input__2_data,
+        input__3_data,
+        input__4_data,
+        input__5_data,
         headers_dict,
         FLAGS.request_compression_algorithm,
         FLAGS.response_compression_algorithm,
@@ -241,11 +283,10 @@ if __name__ == "__main__":
 
     # Validate the results by comparing with precomputed values.
     output__0_data = results.as_numpy("output__0")
-    output__1_data = results.as_numpy("output__1")
 
     # Infer with incorrect model name
     try:
-        _ = test_infer("wrong_model_name", input__0_data).get_response()
+        _ = test_infer("wrong_model_name", input__0_data, input__1_data, input__2_data, input__3_data, input__4_data, input__5_data, ).get_response()
         print("expected error message for wrong model name")
         sys.exit(1)
     except InferenceServerException as ex:
