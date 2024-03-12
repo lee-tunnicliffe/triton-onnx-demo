@@ -1,0 +1,72 @@
+name: "xgboost_model"
+backend: "fil"
+max_batch_size: 0
+input [
+  {
+    name: "age"
+    data_type: TYPE_STRING
+    dims: [ 1, 1 ]
+  },
+  {
+    name: "sex"
+    data_type: TYPE_STRING
+    dims: [ 1, 1 ]
+  },
+  {
+    name: "bmi"
+    data_type: TYPE_STRING
+    dims: [ 1, 1 ]
+  },
+  {
+    name: "bp"
+    data_type: TYPE_STRING
+    dims: [ 1, 1 ]
+  },
+  {
+    name: "s1"
+    data_type: TYPE_STRING
+    dims: [ 1, 1 ]
+  },
+  {
+    name: "s2"
+    data_type: TYPE_STRING
+    dims: [ 1, 1 ]
+  },
+  {
+    name: "s3"
+    data_type: TYPE_STRING
+    dims: [ 1, 1 ]
+  },
+  {
+    name: "s4"
+    data_type: TYPE_STRING
+    dims: [ 1, 1 ]
+  },
+  {
+    name: "s5"
+    data_type: TYPE_STRING
+    dims: [ 1, 1 ]
+  },
+  {
+    name: "s6"
+    data_type: TYPE_STRING
+    dims: [ 1, 1 ]
+  }
+]
+output [
+  {
+    name: "probability"
+    data_type: TYPE_FP32
+    dims: [ -1 ]
+  }
+]
+parameters [
+  {
+    key: "model_type"
+    value: { string_value: "xgboost_json" }
+  },
+  {
+    key: "output_class"
+    value: { string_value: "true" }
+  }
+]
