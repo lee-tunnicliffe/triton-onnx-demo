@@ -1,3 +1,0 @@
-name: "toy_model"
-backend: "tensorflow"
-platform: "tensorflow_savedmodel"
