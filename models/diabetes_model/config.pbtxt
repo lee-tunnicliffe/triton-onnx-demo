@@ -18,11 +18,11 @@ instance_group [{ kind: KIND_AUTO }]
 parameters [
   {
     key: "model_type"
-    value: { string_value: "$MODEL_TYPE" }
+    value: { string_value: "xgboost_json" }
   },
   {
     key: "output_class"
-    value: { string_value: "$IS_A_CLASSIFIER" }
+    value: { string_value: "false" }
   }
 ]
 
